@@ -1,6 +1,13 @@
 import json
+import re
 import subprocess
+import sys
 from datetime import datetime
+
+# Fix Windows console encoding for unicode output
+if sys.stdout.encoding != 'utf-8':
+    import io
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
 
 PROMPT_FILE = "prompts/post_prompt.txt"
 
@@ -9,7 +16,7 @@ def run_claude():
         prompt_text = f.read()
 
     result = subprocess.run(
-        ["claude", "-p", "--output-format", "text"],
+        "claude -p --output-format text",
         input=prompt_text,
         capture_output=True,
         text=True,
@@ -21,18 +28,21 @@ def run_claude():
 def generate_content():
     output = run_claude()
 
-    # Strip markdown code block if present
+    # Extract JSON from output — handles preamble text and markdown code blocks
     output = output.strip()
-    if output.startswith("```"):
-        output = output.split("```", 2)[1]
-        if output.startswith("json"):
-            output = output[4:]
-        output = output.rsplit("```", 1)[0].strip()
+    match = re.search(r'```(?:json)?\s*(\{.*?\})\s*```', output, re.DOTALL)
+    if match:
+        output = match.group(1)
+    else:
+        # Try to find a bare JSON object
+        match = re.search(r'\{.*\}', output, re.DOTALL)
+        if match:
+            output = match.group(0)
 
     try:
         data = json.loads(output)
     except json.JSONDecodeError:
-        print("❌ Failed to parse Claude output")
+        print("FAILED to parse Claude output")
         print(output)
         return
 
@@ -55,8 +65,8 @@ def generate_content():
     with open(filename, "w", encoding="utf-8") as f:
         json.dump(content, f, indent=2)
 
-    print("✅ AI Content created:", filename)
-    print("📊 Research:", content["research_summary"])
-    print("🎯 Angle:", content["content_angle"])
+    print("AI Content created:", filename)
+    print("Research:", content["research_summary"])
+    print("Angle:", content["content_angle"])
 
 generate_content()
