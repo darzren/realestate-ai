@@ -2,7 +2,7 @@ import json
 import subprocess
 from datetime import datetime
 
-PROMPT_FILE = "prompts/reel_prompt.txt"
+PROMPT_FILE = "prompts/post_prompt.txt"
 
 def run_claude():
     with open(PROMPT_FILE, encoding="utf-8") as f:
