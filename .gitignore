@@ -1,0 +1,6 @@
+venv/
+media/videos/
+__pycache__/
+*.pyc
+.claude/
+.env
