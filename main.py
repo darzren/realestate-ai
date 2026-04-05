@@ -63,7 +63,7 @@ def generate_content():
         json.dump(content, f, indent=2)
 
     print("AI Content created:", filename)
-    print("Research:", content["research_summary"])
-    print("Angle:", content["content_angle"])
+    print("Angle:", content.get("content_angle", ""))
+    print("Text:", (content.get("post_text") or content.get("caption") or content.get("script", ""))[:120])
 
 generate_content()
