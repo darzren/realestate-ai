@@ -2,7 +2,9 @@ import json
 import re
 import subprocess
 import sys
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
+
+NZT = timezone(timedelta(hours=12))  # NZST UTC+12 (Apr-Sep); change to 13 for NZDT (Oct-Mar)
 
 # Fix Windows console encoding for unicode output
 if sys.stdout.encoding != 'utf-8':
@@ -47,9 +49,9 @@ def generate_content():
         return
 
     content = {
-        "id": datetime.now().strftime("%Y%m%d%H%M"),
+        "id": datetime.now(NZT).strftime("%Y%m%d%H%M"),
         "media_path": "media/videos/sample.mp4",
-        "scheduled_time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "scheduled_time": datetime.now(NZT).strftime("%Y-%m-%d %H:%M:%S"),
         "status": "ready",
         "research_summary": data.get("research_summary", ""),
         "content_angle": data.get("content_angle", ""),
