@@ -48,18 +48,13 @@ def generate_content():
         print(output)
         return
 
+    now = datetime.now(NZT)
     content = {
-        "id": datetime.now(NZT).strftime("%Y%m%d%H%M"),
+        "id": now.strftime("%Y%m%d%H%M"),
         "media_path": "media/videos/sample.mp4",
-        "scheduled_time": datetime.now(NZT).strftime("%Y-%m-%d %H:%M:%S"),
+        "scheduled_time": now.strftime("%Y-%m-%d %H:%M:%S"),
         "status": "ready",
-        "research_summary": data.get("research_summary", ""),
-        "content_angle": data.get("content_angle", ""),
-        "hook": data.get("hook", ""),
-        "script": data.get("script", ""),
-        "caption": data.get("caption", ""),
-        "hashtags": data.get("hashtags", []),
-        "call_to_action": data.get("call_to_action", ""),
+        **data,
     }
 
     filename = f"data/content_ready/{content['id']}.json"

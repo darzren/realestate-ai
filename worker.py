@@ -19,7 +19,8 @@ def check_and_post():
         )
 
         if datetime.now() >= scheduled_time:
-            print("🚀 Posting:", content["caption"])
+            display = content.get("caption") or content.get("post_text") or content.get("script", "")
+            print("🚀 Posting:", display)
 
             os.rename(
                 path,
